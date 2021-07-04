@@ -107,7 +107,7 @@ void SimTESCoil(EnergyPlusData &state,
                 std::string const &CompName, // name of the fan coil unit
                 int &CompIndex,
                 int const FanOpMode, // allows parent object to control fan mode
-                int &TESOpMode,
+                PTSCControlMode &TESOpMode,
                 Optional<Real64 const> PartLoadRatio // part load ratio (for single speed cycling unit)
 )
 {
@@ -153,24 +153,24 @@ void SimTESCoil(EnergyPlusData &state,
         }
     }
 
-    TESOpMode = CoolingOnlyMode;
+    TESOpMode = PTSCControlMode::CoolingOnly;
 
     InitTESCoil(state, TESCoilNum);
 
     TESOpMode = state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode;
     {
         auto const SELECT_CASE_var(TESOpMode);
-        if (SELECT_CASE_var == OffMode) {
+        if (SELECT_CASE_var == PTSCControlMode::Off) {
             CalcTESCoilOffMode(state, TESCoilNum);
-        } else if (SELECT_CASE_var == CoolingOnlyMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::CoolingOnly) {
             CalcTESCoilCoolingOnlyMode(state, TESCoilNum, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == CoolingAndChargeMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndCharge) {
             CalcTESCoilCoolingAndChargeMode(state, TESCoilNum, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == CoolingAndDischargeMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndDischarge) {
             CalcTESCoilCoolingAndDischargeMode(state, TESCoilNum, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == ChargeOnlyMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::ChargeOnly) {
             CalcTESCoilChargeOnlyMode(state, TESCoilNum);
-        } else if (SELECT_CASE_var == DischargeOnlyMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::DischargeOnly) {
             CalcTESCoilDischargeOnlyMode(state, TESCoilNum, PartLoadRatio);
         }
     }
@@ -1778,10 +1778,11 @@ void GetTESCoilInput(EnergyPlusData &state)
 
     // setup reporting
     for (item = 1; item <= state.dataPackagedThermalStorageCoil->NumTESCoils; ++item) {
+        Real64 controlModeLValue = static_cast<Real64>(state.dataPackagedThermalStorageCoil->TESCoil(item).CurControlMode);
         SetupOutputVariable(state,
                             "Cooling Coil Operating Mode Index",
                             OutputProcessor::Unit::None,
-                            state.dataPackagedThermalStorageCoil->TESCoil(item).CurControlMode,
+                            controlModeLValue,
                             "System",
                             "Average",
                             state.dataPackagedThermalStorageCoil->TESCoil(item).Name);
@@ -2184,7 +2185,7 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
     }
 
     if (state.dataGlobal->BeginEnvrnFlag && MyEnvrnFlag(TESCoilNum)) {
-        state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+        state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
         state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).QdotPlant = 0.0;
         state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).Q_Plant = 0.0;
         state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).QdotAmbient = 0.0;
@@ -2235,15 +2236,15 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
     if (GetCurrentScheduleValue(state, state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).AvailSchedNum) != 0.0) {
         if (state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).ModeControlType == iModeCtrlType::ScheduledOpModes) {
             tmpSchedValue = GetCurrentScheduleValue(state, state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).ControlModeSchedNum);
-            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = tmpSchedValue;
+            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = static_cast<PTSCControlMode>(tmpSchedValue);
             // check if value is valid
             {
                 auto const SELECT_CASE_var(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode);
-                if ((SELECT_CASE_var == OffMode) || (SELECT_CASE_var == CoolingOnlyMode) || (SELECT_CASE_var == CoolingAndChargeMode) ||
-                    (SELECT_CASE_var == CoolingAndDischargeMode) || (SELECT_CASE_var == ChargeOnlyMode) || (SELECT_CASE_var == DischargeOnlyMode)) {
+                if ((SELECT_CASE_var == PTSCControlMode::Off) || (SELECT_CASE_var == PTSCControlMode::CoolingOnly) || (SELECT_CASE_var == PTSCControlMode::CoolingAndCharge) ||
+                    (SELECT_CASE_var == PTSCControlMode::CoolingAndDischarge) || (SELECT_CASE_var == PTSCControlMode::ChargeOnly) || (SELECT_CASE_var == PTSCControlMode::DischargeOnly)) {
                     // do nothing, these are okay
                 } else {
-                    state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                    state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
                     if (state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).ControlModeErrorIndex == 0) {
                         ShowSevereMessage(state, "InitTESCoil: Invalid control schedule value for operating mode");
                         ShowContinueError(state,
@@ -2263,13 +2264,13 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
         } else if (state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).ModeControlType == iModeCtrlType::EMSActuatedOpModes) {
             if (state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).EMSControlModeOn) {
                 state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode =
-                    std::floor(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).EMSControlModeValue);
+                    static_cast<PTSCControlMode>(std::floor(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).EMSControlModeValue));
                 // check if value is valid
                 {
                     auto const SELECT_CASE_var(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode);
-                    if (SELECT_CASE_var == OffMode) {
+                    if (SELECT_CASE_var == PTSCControlMode::Off) {
 
-                    } else if (SELECT_CASE_var == CoolingOnlyMode) {
+                    } else if (SELECT_CASE_var == PTSCControlMode::CoolingOnly) {
                         if (!(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CoolingOnlyModeIsAvailable)) {
                             ShowSevereMessage(state, "InitTESCoil: Invalid control value for operating mode");
                             ShowContinueError(state,
@@ -2277,9 +2278,9 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
                                                   state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).Name);
                             ShowContinueError(state, "Value returned from EMS indicates Cooling Only Mode but that mode is not available.");
                             ShowContinueError(state, "Operating mode will be set to Off, and the simulation continues");
-                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
                         }
-                    } else if (SELECT_CASE_var == CoolingAndChargeMode) {
+                    } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndCharge) {
                         if (!(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CoolingAndChargeModeAvailable)) {
                             ShowSevereMessage(state, "InitTESCoil: Invalid control value for operating mode");
                             ShowContinueError(state,
@@ -2287,9 +2288,9 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
                                                   state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).Name);
                             ShowContinueError(state, "Value returned from EMS indicates Cooling And Charge Mode but that mode is not available.");
                             ShowContinueError(state, "Operating mode will be set to Off, and the simulation continues");
-                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
                         }
-                    } else if (SELECT_CASE_var == CoolingAndDischargeMode) {
+                    } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndDischarge) {
                         if (!(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CoolingAndDischargeModeAvailable)) {
                             ShowSevereMessage(state, "InitTESCoil: Invalid control value for operating mode");
                             ShowContinueError(state,
@@ -2297,9 +2298,9 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
                                                   state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).Name);
                             ShowContinueError(state, "Value returned from EMS indicates Cooling And Discharge Mode but that mode is not available.");
                             ShowContinueError(state, "Operating mode will be set to Off, and the simulation continues");
-                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
                         }
-                    } else if (SELECT_CASE_var == ChargeOnlyMode) {
+                    } else if (SELECT_CASE_var == PTSCControlMode::ChargeOnly) {
                         if (!(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).ChargeOnlyModeAvailable)) {
                             ShowSevereMessage(state, "InitTESCoil: Invalid control value for operating mode");
                             ShowContinueError(state,
@@ -2307,9 +2308,9 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
                                                   state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).Name);
                             ShowContinueError(state, "Value returned from EMS indicates Charge Only Mode but that mode is not available.");
                             ShowContinueError(state, "Operating mode will be set to Off, and the simulation continues");
-                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
                         }
-                    } else if (SELECT_CASE_var == DischargeOnlyMode) {
+                    } else if (SELECT_CASE_var == PTSCControlMode::DischargeOnly) {
                         if (!(state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).DischargeOnlyModeAvailable)) {
                             ShowSevereMessage(state, "InitTESCoil: Invalid control value for operating mode");
                             ShowContinueError(state,
@@ -2317,10 +2318,10 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
                                                   state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).Name);
                             ShowContinueError(state, "Value returned from EMS indicates Discharge Only Mode but that mode is not available.");
                             ShowContinueError(state, "Operating mode will be set to Off, and the simulation continues");
-                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                            state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
                         }
                     } else {
-                        state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                        state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
                         if (state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).ControlModeErrorIndex == 0) {
                             ShowSevereMessage(state, "InitTESCoil: Invalid control value for operating mode");
                             ShowContinueError(state,
@@ -2339,11 +2340,11 @@ void InitTESCoil(EnergyPlusData &state, int &TESCoilNum)
                     }
                 }
             } else {
-                state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+                state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
             }
         }
     } else {
-        state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = OffMode;
+        state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).CurControlMode = PTSCControlMode::Off;
     }
 
     state.dataPackagedThermalStorageCoil->TESCoil(TESCoilNum).QdotPlant = 0.0; // heat exchange rate for plant connection to TES tank [W]
@@ -4624,12 +4625,12 @@ void ControlTESIceStorageTankCoil(
     EnergyPlusData &state,
     std::string const &CoilName,               // child object coil name
     int CoilIndex,                             // child object coil index
-    std::string SystemType,                    // parent object system type
+    const std::string& SystemType,                    // parent object system type
     int const FanOpMode,                       // parent object fan operating mode
     Real64 const DesiredOutletTemp,            // desired outlet temperature [C]
     Real64 const DesiredOutletHumRat,          // desired outlet humidity ratio [kg/kg]
     Real64 &PartLoadFrac,                      // value based on coil operation, if possible, as PLR required to meet T or w set point
-    int &TESOpMode,                            // value determined in InitTESCoil and passed back to parent for use in iteration routines
+    PTSCControlMode &TESOpMode,                            // value determined in InitTESCoil and passed back to parent for use in iteration routines
     HVACDXSystem::DehumidControl &ControlType, // parent object dehumidification control type (e.g., None, Multimode, CoolReheat)
     int &SensPLRIter,                          // iteration number of Sensible PLR Iteration warning message
     int &SensPLRIterIndex,                     // index to Sensible PLR Iteration warning message
@@ -4675,7 +4676,7 @@ void ControlTESIceStorageTankCoil(
 
     // First get the control mode that the child coil is in
     SimTESCoil(state, CoilName, CoilIndex, FanOpMode, TESOpMode, PartLoadFrac);
-    if (TESOpMode == OffMode || TESOpMode == ChargeOnlyMode) { // cannot cool
+    if (TESOpMode == PTSCControlMode::Off || TESOpMode == PTSCControlMode::ChargeOnly) { // cannot cool
         PartLoadFrac = 0.0;
     } else {
         // Get no load result
@@ -4711,7 +4712,7 @@ void ControlTESIceStorageTankCoil(
             } else {
                 Par(1) = double(CoilIndex);
                 Par(2) = DesiredOutletTemp;
-                Par(3) = TESOpMode;
+                Par(3) = static_cast<int>(TESOpMode);
                 Par(4) = OutletNode;
                 Par(5) = double(FanOpMode);
                 General::SolveRoot(state, Acc, MaxIte, SolFlag, PartLoadFrac, TESCoilResidualFunction, 0.0, 1.0, Par);
@@ -4781,7 +4782,7 @@ void ControlTESIceStorageTankCoil(
                 } else {
                     Par(1) = double(CoilIndex);
                     Par(2) = DesiredOutletHumRat;
-                    Par(3) = TESOpMode;
+                    Par(3) = static_cast<int>(TESOpMode);
                     Par(4) = OutletNode;
                     Par(5) = double(FanOpMode);
                     General::SolveRoot(state, HumRatAcc, MaxIte, SolFlag, PartLoadFrac, TESCoilHumRatResidualFunction, 0.0, 1.0, Par);
@@ -4878,23 +4879,23 @@ Real64 TESCoilResidualFunction(EnergyPlusData &state,
     int CoilIndex;        // index of this coil
     Real64 OutletAirTemp; // outlet air temperature [C]
     int FanOpMode;        // Supply air fan operating mode
-    int TESOpMode;
+    PTSCControlMode TESOpMode;
     int OutletNodeNum;
 
     CoilIndex = int(Par(1));
     FanOpMode = int(Par(5));
     OutletNodeNum = int(Par(4));
-    TESOpMode = int(Par(3));
+    TESOpMode = static_cast<PTSCControlMode>(Par(3));
 
     {
         auto const SELECT_CASE_var(TESOpMode);
-        if (SELECT_CASE_var == CoolingOnlyMode) {
+        if (SELECT_CASE_var == PTSCControlMode::CoolingOnly) {
             CalcTESCoilCoolingOnlyMode(state, CoilIndex, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == CoolingAndChargeMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndCharge) {
             CalcTESCoilCoolingAndChargeMode(state, CoilIndex, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == CoolingAndDischargeMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndDischarge) {
             CalcTESCoilCoolingAndDischargeMode(state, CoilIndex, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == DischargeOnlyMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::DischargeOnly) {
             CalcTESCoilDischargeOnlyMode(state, CoilIndex, PartLoadRatio);
         }
     }
@@ -4938,23 +4939,23 @@ Real64 TESCoilHumRatResidualFunction(EnergyPlusData &state,
     int CoilIndex;          // index of this coil
     Real64 OutletAirHumRat; // outlet air humidity ratio [kgWater/kgDryAir]
     int FanOpMode;          // Supply air fan operating mode
-    int TESOpMode;
+    PTSCControlMode TESOpMode;
     int OutletNodeNum;
 
     CoilIndex = int(Par(1));
     FanOpMode = int(Par(5));
     OutletNodeNum = int(Par(4));
-    TESOpMode = int(Par(3));
+    TESOpMode = static_cast<PTSCControlMode>(Par(3));
 
     {
         auto const SELECT_CASE_var(TESOpMode);
-        if (SELECT_CASE_var == CoolingOnlyMode) {
+        if (SELECT_CASE_var == PTSCControlMode::CoolingOnly) {
             CalcTESCoilCoolingOnlyMode(state, CoilIndex, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == CoolingAndChargeMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndCharge) {
             CalcTESCoilCoolingAndChargeMode(state, CoilIndex, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == CoolingAndDischargeMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::CoolingAndDischarge) {
             CalcTESCoilCoolingAndDischargeMode(state, CoilIndex, FanOpMode, PartLoadRatio);
-        } else if (SELECT_CASE_var == DischargeOnlyMode) {
+        } else if (SELECT_CASE_var == PTSCControlMode::DischargeOnly) {
             CalcTESCoilDischargeOnlyMode(state, CoilIndex, PartLoadRatio);
         }
     }
