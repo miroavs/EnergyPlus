@@ -75,17 +75,6 @@ namespace PackagedThermalStorageCoil {
         EMSActuatedOpModes, // control over TES modes is via EMS
     };
 
-    // Control Modes
-    enum class PTSCControlMode : int {
-        Unassigned = -1,
-        Off,
-        CoolingOnly,
-        CoolingAndCharge,
-        CoolingAndDischarge,
-        ChargeOnly,
-        DischargeOnly
-    };
-
     // storage media
     enum class iMedia
     {
@@ -120,7 +109,7 @@ namespace PackagedThermalStorageCoil {
         int ControlModeSchedNum;       // pointer to control schedule if used
         bool EMSControlModeOn;         // if true, then EMS actuator has been used
         Real64 EMSControlModeValue;    // value to use from EMS actuator for control mode
-        PTSCControlMode CurControlMode;
+        HVACDXSystem::PTSCControlMode CurControlMode;
         int ControlModeErrorIndex;
         Real64 RatedEvapAirVolFlowRate;  // [m3/s]
         Real64 RatedEvapAirMassFlowRate; // [kg/s]
@@ -362,7 +351,7 @@ namespace PackagedThermalStorageCoil {
         // Default Constructor
         PackagedTESCoolingCoilStruct()
             : AvailSchedNum(0), ModeControlType(iModeCtrlType::Unassigned), ControlModeSchedNum(0), EMSControlModeOn(false), EMSControlModeValue(0.0),
-              CurControlMode(PTSCControlMode::Off), ControlModeErrorIndex(0), RatedEvapAirVolFlowRate(0.0), RatedEvapAirMassFlowRate(0.0), EvapAirInletNodeNum(0),
+              CurControlMode(HVACDXSystem::PTSCControlMode::Off), ControlModeErrorIndex(0), RatedEvapAirVolFlowRate(0.0), RatedEvapAirMassFlowRate(0.0), EvapAirInletNodeNum(0),
               EvapAirOutletNodeNum(0), CoolingOnlyModeIsAvailable(false), CoolingOnlyRatedTotCap(0.0), CoolingOnlyRatedSHR(0.0),
               CoolingOnlyRatedCOP(0.0), CoolingOnlyCapFTempCurve(0), CoolingOnlyCapFTempObjectNum(0), CoolingOnlyCapFFlowCurve(0),
               CoolingOnlyCapFFlowObjectNum(0), CoolingOnlyEIRFTempCurve(0), CoolingOnlyEIRFTempObjectNum(0), CoolingOnlyEIRFFlowCurve(0),
@@ -425,7 +414,7 @@ namespace PackagedThermalStorageCoil {
                     std::string const &CompName, // name of the fan coil unit
                     int &CompIndex,
                     int const FanOpMode, // allows parent object to control fan mode
-                    PTSCControlMode &TESOpMode,
+                    HVACDXSystem::PTSCControlMode &TESOpMode,
                     Optional<Real64 const> PartLoadRatio = _ // part load ratio (for single speed cycling unit)
     );
 
@@ -461,7 +450,7 @@ namespace PackagedThermalStorageCoil {
                                       Real64 const DesiredOutletTemp,
                                       Real64 const DesiredOutletHumRat,
                                       Real64 &PartLoadFrac,
-                                      PTSCControlMode &TESOpMode,
+                                      HVACDXSystem::PTSCControlMode &TESOpMode,
                                       HVACDXSystem::DehumidControl &ControlType,
                                       int &SensPLRIter,
                                       int &SensPLRIterIndex,

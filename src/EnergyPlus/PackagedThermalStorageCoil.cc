@@ -85,6 +85,8 @@
 #include <EnergyPlus/WaterManager.hh>
 #include <EnergyPlus/WaterThermalTanks.hh>
 
+using namespace EnergyPlus::HVACDXSystem;
+
 namespace EnergyPlus::PackagedThermalStorageCoil {
 
 // Module containing the routines dealing with the packaged thermal storage cooling

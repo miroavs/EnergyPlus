@@ -56,6 +56,7 @@
 #include <EnergyPlus/Data/BaseData.hh>
 #include <EnergyPlus/DataGlobals.hh>
 #include <EnergyPlus/EnergyPlus.hh>
+//#include <EnergyPlus/PackagedThermalStorageCoil.hh>
 
 namespace EnergyPlus {
 
@@ -91,6 +92,18 @@ namespace HVACDXSystem {
         CoolingAndDischargeMode,
         ChargeOnlyMode,
         DischargeOnlyMode
+    };
+
+    // Packaged Thermal Storage Coil Control Modes - Moved here to prevent circular dependency
+    enum class PTSCControlMode : int
+    {
+        Unassigned = -1,
+        Off,
+        CoolingOnly,
+        CoolingAndCharge,
+        CoolingAndDischarge,
+        ChargeOnly,
+        DischargeOnly
     };
 
     struct DXCoolingConditions
@@ -170,7 +183,7 @@ namespace HVACDXSystem {
         // variable-speed coil
         int SpeedNum; // select speed number for variable-speed coil
         // Packaged thermal energy storage coil
-        int TESOpMode;
+        PTSCControlMode TESOpMode;
         // Fault model of coil SAT sensor
         bool FaultyCoilSATFlag;     // True if the coil has SAT sensor fault
         int FaultyCoilSATIndex;     // Index of the fault object corresponding to the coil
@@ -192,7 +205,7 @@ namespace HVACDXSystem {
               MSpdCycSensPLRIter(0), MSpdCycSensPLRIterIndex(0), MSpdLatPLRIter(0), MSpdLatPLRIterIndex(0), MSpdCycLatPLRIter(0),
               MSpdCycLatPLRIterIndex(0), MModeSensPLRIter(0), MModeSensPLRIterIndex(0), MModeLatPLRIter(0), MModeLatPLRIterIndex(0),
               MModeLatPLRIter2(0), MModeLatPLRIterIndex2(0), OAUnitSetTemp(0.0), ISHundredPercentDOASDXCoil(false), DesignMinOutletTemp(0.0),
-              FrostControlStatus(0), SpeedNum(0), TESOpMode(0), FaultyCoilSATFlag(false), FaultyCoilSATIndex(0), FaultyCoilSATOffset(0.0),
+              FrostControlStatus(0), SpeedNum(0), TESOpMode(PTSCControlMode::Off), FaultyCoilSATFlag(false), FaultyCoilSATIndex(0), FaultyCoilSATOffset(0.0),
               VSCoilFanInfoSet(false)
 
         {

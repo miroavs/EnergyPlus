@@ -169,7 +169,7 @@ namespace UnitarySystems {
           m_EMSOverrideMoistZoneLoadRequest(false), m_EMSSensibleZoneLoadValue(0.0), m_EMSMoistureZoneLoadValue(0.0), m_StageNum(0), m_Staged(false),
           m_HeatingFanSpeedRatio(0.0), m_CoolingFanSpeedRatio(0.0), m_NoHeatCoolSpeedRatio(0.0), m_MyFanFlag(true), m_MyCheckFlag(true),
           m_SensibleLoadMet(0.0), m_LatentLoadMet(0.0), m_MyStagedFlag(false), m_SensibleLoadPredicted(0.0), m_MoistureLoadPredicted(0.0),
-          m_FaultyCoilSATFlag(false), m_FaultyCoilSATIndex(0), m_FaultyCoilSATOffset(0.0), m_TESOpMode(0), m_initLoadBasedControlAirLoopPass(false),
+          m_FaultyCoilSATFlag(false), m_FaultyCoilSATIndex(0), m_FaultyCoilSATOffset(0.0), m_TESOpMode(HVACDXSystem::PTSCControlMode::Off), m_initLoadBasedControlAirLoopPass(false),
           m_airLoopPassCounter(0), m_airLoopReturnCounter(0), m_FanCompNotSetYet(true), m_CoolCompNotSetYet(true), m_HeatCompNotSetYet(true),
           m_SuppCompNotSetYet(true), m_OKToPrintSizing(false), m_SmallLoadTolerance(5.0), m_setupOutputVars(false), UnitarySystemType_Num(0),
           MaxIterIndex(0), RegulaFalsiFailedIndex(0), NodeNumOfControlledZone(0), FanPartLoadRatio(0.0), CoolCoilWaterFlowRatio(0.0),
@@ -11969,8 +11969,8 @@ namespace UnitarySystems {
                     } else if (CoilType_Num == DataHVACGlobals::CoilDX_PackagedThermalStorageCooling) {
 
                         // TES coil simulated above with PLR=0. Operating mode is known here, no need to simulate again to determine operating mode.
-                        if (this->m_TESOpMode == PackagedThermalStorageCoil::OffMode ||
-                            this->m_TESOpMode == PackagedThermalStorageCoil::ChargeOnlyMode) { // cannot cool
+                        if (this->m_TESOpMode == HVACDXSystem::PTSCControlMode::Off ||
+                            this->m_TESOpMode == HVACDXSystem::PTSCControlMode::ChargeOnly) { // cannot cool
                             PartLoadFrac = 0.0;
                         } else {
                             // Get full load result
@@ -11994,13 +11994,14 @@ namespace UnitarySystems {
                     if (state.dataLoopNodes->Node(OutletNode).Temp > DesOutTemp - Acc) {
                         PartLoadFrac = 1.0;
                         if (CoilType_Num == DataHVACGlobals::CoilDX_PackagedThermalStorageCooling &&
-                            (this->m_TESOpMode == PackagedThermalStorageCoil::OffMode ||
-                             this->m_TESOpMode == PackagedThermalStorageCoil::ChargeOnlyMode)) {
+                            (this->m_TESOpMode == HVACDXSystem::PTSCControlMode::Off ||
+                             this->m_TESOpMode == HVACDXSystem::PTSCControlMode::ChargeOnly)) {
+
                             PartLoadFrac = 0.0;
                         }
                     } else if (CoilType_Num == DataHVACGlobals::CoilDX_PackagedThermalStorageCooling &&
-                               (this->m_TESOpMode == PackagedThermalStorageCoil::OffMode ||
-                                this->m_TESOpMode == PackagedThermalStorageCoil::ChargeOnlyMode)) {
+                               (this->m_TESOpMode == HVACDXSystem::PTSCControlMode::Off ||
+                                this->m_TESOpMode == HVACDXSystem::PTSCControlMode::ChargeOnly)) {
                         PartLoadFrac = 0.0;
                     } else if (!SensibleLoad) {
                         PartLoadFrac = 0.0;
@@ -12879,8 +12880,8 @@ namespace UnitarySystems {
                         } else if (CoilType_Num == DataHVACGlobals::CoilDX_PackagedThermalStorageCooling) {
 
                             if (CoilType_Num == DataHVACGlobals::CoilDX_PackagedThermalStorageCooling &&
-                                (this->m_TESOpMode != PackagedThermalStorageCoil::OffMode &&
-                                 this->m_TESOpMode != PackagedThermalStorageCoil::ChargeOnlyMode)) {
+                                (this->m_TESOpMode != HVACDXSystem::PTSCControlMode::Off &&
+                                 this->m_TESOpMode != HVACDXSystem::PTSCControlMode::ChargeOnly)) {
                                 Par[1] = double(this->m_UnitarySysNum);
                                 Par[2] = 0.0; // DesOutTemp; set to 0 if humrat controlled
                                 Par[3] = DesOutHumRat;
