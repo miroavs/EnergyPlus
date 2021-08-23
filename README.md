@@ -1,4 +1,5 @@
 DUMMY CHANGE
+DUMMY CHANGE 2
 
 EnergyPlus [![](https://img.shields.io/github/release/NREL/energyplus.svg)](https://github.com/NREL/EnergyPlus/releases/latest)
 ==========
