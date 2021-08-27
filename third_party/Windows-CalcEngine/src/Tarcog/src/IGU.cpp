@@ -98,7 +98,7 @@ namespace Tarcog
             t_Layer->setHeight(m_Height);
         }
 
-        void CIGU::addLayers(const std::initializer_list<std::shared_ptr<CBaseIGULayer>> & layers)
+        void CIGU::addLayers(std::initializer_list<std::shared_ptr<CBaseIGULayer>>  layers)
         {
             for(const auto & layer : layers)
             {

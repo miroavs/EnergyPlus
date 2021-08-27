@@ -151,7 +151,7 @@ namespace ICEngineElectricGenerator {
         }
 
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      const PlantLocation &calledFromLocation,
+                      EnergyPlus::PlantLocation calledFromLocation,
                       bool FirstHVACIteration,
                       Real64 &CurLoad,
                       bool RunFlag) override;
@@ -167,7 +167,7 @@ namespace ICEngineElectricGenerator {
         void setupOutputVars(EnergyPlusData &state);
 
         void getDesignCapacities(EnergyPlusData &state,
-                                 [[maybe_unused]] const PlantLocation &calledFromLocation,
+                                 [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation,
                                  Real64 &MaxLoad,
                                  Real64 &MinLoad,
                                  Real64 &OptLoad) override;

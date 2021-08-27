@@ -69,7 +69,7 @@ public:
 
     json decode(std::string const &idf, json const &schema, bool &success);
 
-    std::string encode(json const &root, json const &schema);
+    std::string encode(int root, int schema);
 
     std::string normalizeObjectType(std::string const &objectType);
 

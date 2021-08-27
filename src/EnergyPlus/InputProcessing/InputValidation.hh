@@ -60,7 +60,7 @@ public:
 
     explicit Validation(json const *parsed_schema);
 
-    bool validate(json const &parsed_input);
+    bool validate(int parsed_input);
 
     bool hasErrors();
 

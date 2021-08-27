@@ -25,7 +25,7 @@ StringPiece StringPiece::substr(size_type pos, size_type n) const {
   return StringPiece(data_ + pos, n);
 }
 
-StringPiece::size_type StringPiece::find(const StringPiece& s,
+StringPiece::size_type StringPiece::find(re2::StringPiece  s,
                                          size_type pos) const {
   if (pos > size_) return npos;
   const_pointer result = std::search(data_ + pos, data_ + size_,
@@ -40,7 +40,7 @@ StringPiece::size_type StringPiece::find(char c, size_type pos) const {
   return result != data_ + size_ ? result - data_ : npos;
 }
 
-StringPiece::size_type StringPiece::rfind(const StringPiece& s,
+StringPiece::size_type StringPiece::rfind(re2::StringPiece  s,
                                           size_type pos) const {
   if (size_ < s.size_) return npos;
   if (s.size_ == 0) return std::min(size_, pos);
@@ -57,7 +57,7 @@ StringPiece::size_type StringPiece::rfind(char c, size_type pos) const {
   return npos;
 }
 
-std::ostream& operator<<(std::ostream& o, const StringPiece& p) {
+std::ostream& operator<<(std::ostream& o, re2::StringPiece  p) {
   o.write(p.data(), p.size());
   return o;
 }

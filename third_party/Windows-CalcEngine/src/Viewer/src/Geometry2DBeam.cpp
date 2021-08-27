@@ -446,7 +446,7 @@ namespace Viewer
         m_CurrentResult = m_Results.append(t_ProfileAngle, aDirectToDirect, aViewFactors);
     }
 
-    bool CDirect2DRays::isInRay(CPoint2D const & t_Point) const
+    bool CDirect2DRays::isInRay(Viewer::CPoint2D  t_Point) const
     {
         assert(m_UpperRay != nullptr);
         assert(m_LowerRay != nullptr);
@@ -454,7 +454,7 @@ namespace Viewer
                && m_LowerRay->position(t_Point) == PointPosition::Invisible;
     }
 
-    std::shared_ptr<CViewSegment2D> CDirect2DRays::createSubBeam(CPoint2D const & t_Point,
+    std::shared_ptr<CViewSegment2D> CDirect2DRays::createSubBeam(Viewer::CPoint2D  t_Point,
                                                                  double const t_ProfileAngle) const
     {
         std::shared_ptr<CViewSegment2D> subSegment = nullptr;

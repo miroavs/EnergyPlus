@@ -89,7 +89,7 @@ bool Reader::containsNewLine(Reader::Location begin, Reader::Location end) {
 
 Reader::Reader() : features_(Features::all()) {}
 
-Reader::Reader(const Features& features) : features_(features) {}
+Reader::Reader(Json::Features  features) : features_(features) {}
 
 bool Reader::parse(const std::string& document, Value& root,
                    bool collectComments) {

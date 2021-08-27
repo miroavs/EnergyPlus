@@ -142,8 +142,8 @@ namespace CTElectricGenerator {
         {
         }
 
-        void
-        simulate(EnergyPlusData &state, const PlantLocation &calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
+        void simulate(
+            EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
 
         void setupOutputVars(EnergyPlusData &state);
 

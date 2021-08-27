@@ -189,7 +189,7 @@ void OnePass_Checks() {
                 "kMaxCap disagrees with kMaxOnePassCapture");
 }
 
-static bool Satisfy(uint32_t cond, const StringPiece& context, const char* p) {
+static bool Satisfy(uint32_t cond, re2::StringPiece  context, const char* p) {
   uint32_t satisfied = Prog::EmptyFlags(context, p);
   if (cond & kEmptyAllFlags & ~satisfied)
     return false;
@@ -211,8 +211,8 @@ static inline OneState* IndexToNode(uint8_t* nodes, int statesize,
   return reinterpret_cast<OneState*>(nodes + statesize*nodeindex);
 }
 
-bool Prog::SearchOnePass(const StringPiece& text,
-                         const StringPiece& const_context,
+bool Prog::SearchOnePass(re2::StringPiece  text,
+                         re2::StringPiece  const_context,
                          Anchor anchor, MatchKind kind,
                          StringPiece* match, int nmatch) {
   if (anchor != kAnchored && kind != kFullMatch) {

@@ -393,7 +393,7 @@ namespace PlantCentralGSHP {
         void getSizingFactor(Real64 &SizFac) override;
 
         void getDesignCapacities(
-            EnergyPlusData &state, const PlantLocation &calledFromLocation, Real64 &MaxLoad, Real64 &MinLoad, Real64 &OptLoad) override;
+            EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation, Real64 &MaxLoad, Real64 &MinLoad, Real64 &OptLoad) override;
 
         void setupOutputVars(EnergyPlusData &state);
 
@@ -403,7 +403,7 @@ namespace PlantCentralGSHP {
         );
 
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      const PlantLocation &calledFromLocation,
+                      EnergyPlus::PlantLocation calledFromLocation,
                       bool FirstHVACIteration,
                       Real64 &CurLoad,
                       bool RunFlag) override;
@@ -420,7 +420,7 @@ namespace PlantCentralGSHP {
 
         void UpdateChillerRecords(EnergyPlusData &state);
 
-        void onInitLoopEquip([[maybe_unused]] EnergyPlusData &state, [[maybe_unused]] const PlantLocation &calledFromLocation) override;
+        void onInitLoopEquip([[maybe_unused]] EnergyPlusData &state, [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation) override;
 
         void oneTimeInit_new(EnergyPlusData &state) override;
 

@@ -94,7 +94,7 @@ class DFA {
   //   returning the leftmost end of the match instead of the rightmost one.
   // If the DFA cannot complete the search (for example, if it is out of
   //   memory), it sets *failed and returns false.
-  bool Search(const StringPiece& text, const StringPiece& context,
+  bool Search(re2::StringPiece  text, re2::StringPiece  context,
               bool anchored, bool want_earliest_match, bool run_forward,
               bool* failed, const char** ep, SparseSet* matches);
 
@@ -247,7 +247,7 @@ class DFA {
 
   // Search parameters
   struct SearchParams {
-    SearchParams(const StringPiece& text, const StringPiece& context,
+    SearchParams(re2::StringPiece  text, re2::StringPiece  context,
                  RWLocker* cache_lock)
       : text(text), context(context),
         anchored(false),
@@ -1762,8 +1762,8 @@ bool DFA::AnalyzeSearchHelper(SearchParams* params, StartInfo* info,
 }
 
 // The actual DFA search: calls AnalyzeSearch and then FastSearchLoop.
-bool DFA::Search(const StringPiece& text,
-                 const StringPiece& context,
+bool DFA::Search(re2::StringPiece  text,
+                 re2::StringPiece  context,
                  bool anchored,
                  bool want_earliest_match,
                  bool run_forward,
@@ -1858,7 +1858,7 @@ void Prog::DeleteDFA(DFA* dfa) {
 //
 // This is the only external interface (class DFA only exists in this file).
 //
-bool Prog::SearchDFA(const StringPiece& text, const StringPiece& const_context,
+bool Prog::SearchDFA(re2::StringPiece  text, re2::StringPiece  const_context,
                      Anchor anchor, MatchKind kind, StringPiece* match0,
                      bool* failed, SparseSet* matches) {
   *failed = false;

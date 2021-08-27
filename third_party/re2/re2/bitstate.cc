@@ -42,7 +42,7 @@ class BitState {
 
   // The usual Search prototype.
   // Can only call Search once per BitState.
-  bool Search(const StringPiece& text, const StringPiece& context,
+  bool Search(re2::StringPiece  text, re2::StringPiece  context,
               bool anchored, bool longest,
               StringPiece* submatch, int nsubmatch);
 
@@ -282,7 +282,7 @@ bool BitState::TrySearch(int id0, const char* p0) {
 }
 
 // Search text (within context) for prog_.
-bool BitState::Search(const StringPiece& text, const StringPiece& context,
+bool BitState::Search(re2::StringPiece  text, re2::StringPiece  context,
                       bool anchored, bool longest,
                       StringPiece* submatch, int nsubmatch) {
   // Search parameters.
@@ -347,8 +347,8 @@ bool BitState::Search(const StringPiece& text, const StringPiece& context,
 }
 
 // Bit-state search.
-bool Prog::SearchBitState(const StringPiece& text,
-                          const StringPiece& context,
+bool Prog::SearchBitState(re2::StringPiece  text,
+                          re2::StringPiece  context,
                           Anchor anchor,
                           MatchKind kind,
                           StringPiece* match,

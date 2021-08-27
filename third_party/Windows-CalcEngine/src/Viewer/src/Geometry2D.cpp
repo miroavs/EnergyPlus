@@ -131,7 +131,7 @@ namespace Viewer
 
     bool CGeometry2D::pointInSegmentsView(CViewSegment2D const & t_Segment1,
                                           CViewSegment2D const & t_Segment2,
-                                          CPoint2D const & t_Point)
+                                          Viewer::CPoint2D  t_Point)
     {
         // Forming polygon
         std::vector<CViewSegment2D> aPolygon;

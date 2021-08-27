@@ -97,7 +97,7 @@ static RE2::ErrorCode RegexpErrorToRE2(re2::RegexpStatusCode code) {
   return RE2::ErrorInternal;
 }
 
-static std::string trunc(const StringPiece& pattern) {
+static std::string trunc(re2::StringPiece  pattern) {
   if (pattern.size() < 100)
     return std::string(pattern);
   return std::string(pattern.substr(0, 100)) + "...";
@@ -112,11 +112,11 @@ RE2::RE2(const std::string& pattern) {
   Init(pattern, DefaultOptions);
 }
 
-RE2::RE2(const StringPiece& pattern) {
+RE2::RE2(re2::StringPiece  pattern) {
   Init(pattern, DefaultOptions);
 }
 
-RE2::RE2(const StringPiece& pattern, const Options& options) {
+RE2::RE2(re2::StringPiece  pattern, const Options& options) {
   Init(pattern, options);
 }
 
@@ -164,7 +164,7 @@ int RE2::Options::ParseFlags() const {
   return flags;
 }
 
-void RE2::Init(const StringPiece& pattern, const Options& options) {
+void RE2::Init(re2::StringPiece  pattern, const Options& options) {
   static std::once_flag empty_once;
   std::call_once(empty_once, []() {
     empty_string = new std::string;
@@ -331,12 +331,12 @@ const std::map<int, std::string>& RE2::CapturingGroupNames() const {
 
 /***** Convenience interfaces *****/
 
-bool RE2::FullMatchN(const StringPiece& text, const RE2& re,
+bool RE2::FullMatchN(re2::StringPiece  text, const RE2& re,
                      const Arg* const args[], int n) {
   return re.DoMatch(text, ANCHOR_BOTH, NULL, args, n);
 }
 
-bool RE2::PartialMatchN(const StringPiece& text, const RE2& re,
+bool RE2::PartialMatchN(re2::StringPiece  text, const RE2& re,
                         const Arg* const args[], int n) {
   return re.DoMatch(text, UNANCHORED, NULL, args, n);
 }
@@ -365,7 +365,7 @@ bool RE2::FindAndConsumeN(StringPiece* input, const RE2& re,
 
 bool RE2::Replace(std::string* str,
                   const RE2& re,
-                  const StringPiece& rewrite) {
+                  re2::StringPiece  rewrite) {
   StringPiece vec[kVecSize];
   int nvec = 1 + MaxSubmatch(rewrite);
   if (nvec > static_cast<int>(arraysize(vec)))
@@ -385,7 +385,7 @@ bool RE2::Replace(std::string* str,
 
 int RE2::GlobalReplace(std::string* str,
                        const RE2& re,
-                       const StringPiece& rewrite) {
+                       re2::StringPiece  rewrite) {
   StringPiece vec[kVecSize];
   int nvec = 1 + MaxSubmatch(rewrite);
   if (nvec > static_cast<int>(arraysize(vec)))
@@ -454,9 +454,9 @@ int RE2::GlobalReplace(std::string* str,
   return count;
 }
 
-bool RE2::Extract(const StringPiece& text,
+bool RE2::Extract(re2::StringPiece  text,
                   const RE2& re,
-                  const StringPiece& rewrite,
+                  re2::StringPiece  rewrite,
                   std::string* out) {
   StringPiece vec[kVecSize];
   int nvec = 1 + MaxSubmatch(rewrite);
@@ -470,7 +470,7 @@ bool RE2::Extract(const StringPiece& text,
   return re.Rewrite(out, rewrite, vec, nvec);
 }
 
-std::string RE2::QuoteMeta(const StringPiece& unquoted) {
+std::string RE2::QuoteMeta(re2::StringPiece  unquoted) {
   std::string result;
   result.reserve(unquoted.size() << 1);
 
@@ -569,7 +569,7 @@ static int ascii_strcasecmp(const char* a, const char* b, size_t len) {
 
 /***** Actual matching and rewriting code *****/
 
-bool RE2::Match(const StringPiece& text,
+bool RE2::Match(re2::StringPiece  text,
                 size_t startpos,
                 size_t endpos,
                 Anchor re_anchor,
@@ -789,7 +789,7 @@ bool RE2::Match(const StringPiece& text,
 }
 
 // Internal matcher - like Match() but takes Args not StringPieces.
-bool RE2::DoMatch(const StringPiece& text,
+bool RE2::DoMatch(re2::StringPiece  text,
                   Anchor re_anchor,
                   size_t* consumed,
                   const Arg* const* args,
@@ -853,7 +853,7 @@ bool RE2::DoMatch(const StringPiece& text,
 
 // Checks that the rewrite string is well-formed with respect to this
 // regular expression.
-bool RE2::CheckRewriteString(const StringPiece& rewrite,
+bool RE2::CheckRewriteString(re2::StringPiece  rewrite,
                              std::string* error) const {
   int max_token = -1;
   for (const char *s = rewrite.data(), *end = s + rewrite.size();
@@ -893,7 +893,7 @@ bool RE2::CheckRewriteString(const StringPiece& rewrite,
 
 // Returns the maximum submatch needed for the rewrite to be done by Replace().
 // E.g. if rewrite == "foo \\2,\\1", returns 2.
-int RE2::MaxSubmatch(const StringPiece& rewrite) {
+int RE2::MaxSubmatch(re2::StringPiece  rewrite) {
   int max = 0;
   for (const char *s = rewrite.data(), *end = s + rewrite.size();
        s < end; s++) {
@@ -913,7 +913,7 @@ int RE2::MaxSubmatch(const StringPiece& rewrite) {
 // Append the "rewrite" string, with backslash subsitutions from "vec",
 // to string "out".
 bool RE2::Rewrite(std::string* out,
-                  const StringPiece& rewrite,
+                  re2::StringPiece  rewrite,
                   const StringPiece* vec,
                   int veclen) const {
   for (const char *s = rewrite.data(), *end = s + rewrite.size();

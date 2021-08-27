@@ -195,13 +195,13 @@ namespace MicroturbineElectricGenerator {
         }
 
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      const PlantLocation &calledFromLocation,
+                      EnergyPlus::PlantLocation calledFromLocation,
                       bool FirstHVACIteration,
                       Real64 &CurLoad,
                       bool RunFlag) override;
 
         void getDesignCapacities(EnergyPlusData &state,
-                                 [[maybe_unused]] const PlantLocation &calledFromLocation,
+                                 [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation,
                                  [[maybe_unused]] Real64 &MaxLoad,
                                  [[maybe_unused]] Real64 &MinLoad,
                                  [[maybe_unused]] Real64 &OptLoad) override;

@@ -160,7 +160,7 @@ public:
 private:
     std::unique_ptr<std::iostream> os;
     bool print_to_dev_null = false;
-    template <typename... Args> friend void print(InputOutputFile &of, fmt::string_view format_str, const Args &... args);
+    template <typename... Args> friend void print(InputOutputFile &of, fmt::string_view format_str, const Args &...args);
     template <class InputIterator> friend void print(InputIterator first, InputIterator last, InputOutputFile &outputFile, const char *delim);
     template <class InputIterator> friend void print(InputIterator first, InputIterator last, InputOutputFile &outputFile);
     friend class IOFiles;
@@ -406,12 +406,12 @@ std::string vprint(fmt::string_view format_str, fmt::format_args args, const std
 // Defines a custom formatting type 'T' that that truncates the value
 // to match the behavior of TrimSigDigits utility function
 //
-template <typename... Args> void print(std::ostream &os, fmt::string_view format_str, const Args &... args)
+template <typename... Args> void print(std::ostream &os, fmt::string_view format_str, const Args &...args)
 {
     EnergyPlus::vprint(os, format_str, fmt::make_format_args(args...), sizeof...(Args));
 }
 
-template <typename... Args> void print(InputOutputFile &outputFile, fmt::string_view format_str, const Args &... args)
+template <typename... Args> void print(InputOutputFile &outputFile, fmt::string_view format_str, const Args &...args)
 {
     auto *outputStream = [&]() -> std::ostream * {
         if (outputFile.os) {
@@ -463,7 +463,7 @@ template <class InputIterator> void print(InputIterator first, InputIterator las
     std::copy(first, last, std::ostream_iterator<typename std::iterator_traits<InputIterator>::value_type>(*outputStream));
 }
 
-template <typename... Args> std::string format(::fmt::string_view format_str, const Args &... args)
+template <typename... Args> std::string format(::fmt::string_view format_str, const Args &...args)
 {
     return EnergyPlus::vprint(format_str, ::fmt::make_format_args(args...), sizeof...(Args));
 }

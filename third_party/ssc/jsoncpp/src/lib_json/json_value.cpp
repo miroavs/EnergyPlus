@@ -411,7 +411,7 @@ Value::Value(const String& value) {
       value.data(), static_cast<unsigned>(value.length()));
 }
 
-Value::Value(const StaticString& value) {
+Value::Value(Json::StaticString  value) {
   initBasic(stringValue);
   value_.string_ = const_cast<char*>(value.c_str());
 }
@@ -1112,7 +1112,7 @@ Value& Value::operator[](const String& key) {
   return resolveReference(key.data(), key.data() + key.length());
 }
 
-Value& Value::operator[](const StaticString& key) {
+Value& Value::operator[](Json::StaticString  key) {
   return resolveReference(key.c_str());
 }
 

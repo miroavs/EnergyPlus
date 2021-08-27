@@ -802,8 +802,8 @@ namespace SingleLayerOptics
     }
 
     std::vector<std::vector<double>> const &
-      CMaterialSingleBandBSDF::getBSDFMatrix(FenestrationCommon::Property const & t_Property,
-                                             FenestrationCommon::Side const & t_Side) const
+      CMaterialSingleBandBSDF::getBSDFMatrix(FenestrationCommon::Property  t_Property,
+                                             FenestrationCommon::Side  t_Side) const
     {
         return m_Property.at({t_Property, t_Side});
     }

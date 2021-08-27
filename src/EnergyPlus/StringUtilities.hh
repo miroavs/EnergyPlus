@@ -83,7 +83,7 @@ template <typename Param> bool readItem(std::string input, Param &&param)
     return !stream.fail() && stream.eof();
 }
 
-template <typename... Param> bool readList(std::string input, Param &&... param)
+template <typename... Param> bool readList(std::string input, Param &&...param)
 {
     // to do make this a C++17 fold expression when possible
 

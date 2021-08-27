@@ -47,7 +47,7 @@ void GridAxis::set_extrap_limits(const std::pair<double, double> extrap_limits) 
   check_extrap_limits();
 }
 
-double GridAxis::get_spacing_multiplier(const std::size_t &flavor, const std::size_t &index) {
+double GridAxis::get_spacing_multiplier(std::size_t flavor, std::size_t index) {
   return spacing_multipliers[flavor][index];
 }
 
@@ -202,16 +202,16 @@ std::vector<double> GriddedData::get_values_relative(const std::vector<std::size
   return get_values(get_value_index_relative(coords, translation));
 }
 
-const std::vector<double> &GriddedData::get_grid_vector(const std::size_t &dim) {
+const std::vector<double> &GriddedData::get_grid_vector(std::size_t dim) {
   return grid_axes[dim].grid;
 }
 
-std::pair<double, double> GriddedData::get_extrap_limits(const std::size_t &dim) {
+std::pair<double, double> GriddedData::get_extrap_limits(std::size_t dim) {
   return grid_axes[dim].extrapolation_limits;
 }
 
-double GriddedData::get_axis_spacing_mult(const std::size_t &dim, const std::size_t &flavor,
-                                          const std::size_t &index) {
+double GriddedData::get_axis_spacing_mult(std::size_t dim, std::size_t flavor,
+                                          std::size_t index) {
   if (grid_axes[dim].interpolation_method == Method::CUBIC) {
     return grid_axes[dim].get_spacing_multiplier(flavor, index);
   } else {
@@ -219,7 +219,7 @@ double GriddedData::get_axis_spacing_mult(const std::size_t &dim, const std::siz
   }
 }
 
-void GriddedData::set_axis_extrap_method(const std::size_t &dim,
+void GriddedData::set_axis_extrap_method(std::size_t dim,
                                          const Method extrapolation_method) {
   grid_axes[dim].extrapolation_method = extrapolation_method;
 }
@@ -232,7 +232,7 @@ std::vector<Method> GriddedData::get_extrap_methods() {
   return extrap_methods;
 }
 
-void GriddedData::set_axis_extrap_limits(const std::size_t &dim,
+void GriddedData::set_axis_extrap_limits(std::size_t dim,
                                          const std::pair<double, double> &extrap_limits) {
   grid_axes[dim].set_extrap_limits(extrap_limits);
 }
@@ -245,7 +245,7 @@ std::vector<Method> GriddedData::get_interp_methods() {
   return interp_methods;
 }
 
-void GriddedData::set_axis_interp_method(const std::size_t &dim,
+void GriddedData::set_axis_interp_method(std::size_t dim,
                                          const Method interpolation_method) {
   grid_axes[dim].set_interp_method(interpolation_method);
 }

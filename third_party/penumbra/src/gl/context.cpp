@@ -520,7 +520,7 @@ void Context::bufferedQuery(const unsigned surfaceIndex) {
   indexBuffer[i] = -1;
 }
 
-void Context::bufferedQuery(const SurfaceBuffer &surfaceBuffer) {
+void Context::bufferedQuery(Pumbra::SurfaceBuffer surfaceBuffer) {
   if (indexBuffer[currentBufferIndex] > -1) {
     glGetQueryObjectiv(queries[currentBufferIndex], GL_QUERY_RESULT, &(pixelCounts.at(indexBuffer[currentBufferIndex])));
   }

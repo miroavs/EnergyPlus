@@ -222,8 +222,8 @@ void Ground::setbValue(const int i, const double val) {
   }
 }
 
-void Ground::setValuesADI(const std::size_t &index, const double &A, const double (&Alt)[2],
-                          const double &bVal) {
+void Ground::setValuesADI(std::size_t index, double A, const double [2] Alt)[2],
+                          double bVal) {
   a1[index] = Alt[0];
   a2[index] = A;
   a3[index] = Alt[1];

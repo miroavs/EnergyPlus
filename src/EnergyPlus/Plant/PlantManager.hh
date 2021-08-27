@@ -112,7 +112,7 @@ namespace PlantManager {
         // this is for purely air side equipment or similar that dont need anything at all done on plant for now
         // this could be a placeholder until those components are more integrated with plant side calcs.
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      [[maybe_unused]] const PlantLocation &calledFromLocation,
+                      [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation,
                       [[maybe_unused]] bool FirstHVACIteration,
                       [[maybe_unused]] Real64 &CurLoad,
                       [[maybe_unused]] bool RunFlag) override

@@ -55,7 +55,7 @@ short ShadeDB8_mpp::get_impp(size_t i)
 };
 
 
-bool ShadeDB8_mpp::get_index(const size_t &N, const size_t &d, const  size_t &t, const size_t &S, const  db_type &DB_TYPE, size_t* ret_ndx)
+bool ShadeDB8_mpp::get_index(size_t N, size_t d, size_t t, size_t S, ShadeDB8_mpp::db_type DB_TYPE, size_t* ret_ndx)
 {
 	bool ret_val = false;
 	//size_t ret_ndx=-1;
@@ -129,7 +129,7 @@ size_t ShadeDB8_mpp::n_choose_k(size_t n, size_t k)
 	return result;
 }
 
-std::vector<double> ShadeDB8_mpp::get_vector(const size_t &N, const size_t &d, const size_t &t, const size_t &S, const db_type &DB_TYPE)
+std::vector<double> ShadeDB8_mpp::get_vector(size_t N, size_t d, size_t t, size_t S, ShadeDB8_mpp::db_type DB_TYPE)
 {
 	std::vector<double> ret_vec;
 	size_t length = 0;

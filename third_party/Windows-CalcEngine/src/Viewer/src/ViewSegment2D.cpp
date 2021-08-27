@@ -131,7 +131,7 @@ namespace Viewer
         return std::make_shared<CViewSegment2D>(aSegment->startPoint(), aSegment->endPoint());
     }
 
-    PointPosition CViewSegment2D::position(CPoint2D const & t_Point) const
+    PointPosition CViewSegment2D::position(Viewer::CPoint2D  t_Point) const
     {
         auto aPosition = PointPosition::OnLine;
 

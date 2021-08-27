@@ -71,7 +71,7 @@ namespace FenestrationCommon
         }
     }
 
-    CSeries::CSeries(const std::initializer_list<std::pair<double, double>> & t_values)
+    CSeries::CSeries(std::initializer_list<std::pair<double, double>>  t_values)
     {
         m_Series.clear();
         for(const auto & val : t_values)

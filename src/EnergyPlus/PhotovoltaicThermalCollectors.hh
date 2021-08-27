@@ -164,10 +164,10 @@ namespace PhotovoltaicThermalCollectors {
 
         static PlantComponent *factory(EnergyPlusData &state, std::string_view objectName);
 
-        void onInitLoopEquip([[maybe_unused]] EnergyPlusData &state, const PlantLocation &calledFromLocation) override;
+        void onInitLoopEquip([[maybe_unused]] EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation) override;
 
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      const PlantLocation &calledFromLocation,
+                      EnergyPlus::PlantLocation calledFromLocation,
                       bool FirstHVACIteration,
                       Real64 &CurLoad,
                       bool RunFlag) override;

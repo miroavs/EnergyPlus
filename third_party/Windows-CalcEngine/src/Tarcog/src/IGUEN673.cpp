@@ -96,7 +96,7 @@ namespace Tarcog
             filmCoefficient(filmCoefficient)
         {}
 
-        IGU::IGU(const Environment & interior, const Environment & exterior) :
+        IGU::IGU(Tarcog::EN673::Environment  interior, Tarcog::EN673::Environment  exterior) :
             interior(interior),
             exterior(exterior),
             numOfSolidLayers(0)
@@ -263,7 +263,7 @@ namespace Tarcog
             }
         }
 
-        std::unique_ptr<IGU> IGU::create(const Environment & interior, const Environment & exterior)
+        std::unique_ptr<IGU> IGU::create(Tarcog::EN673::Environment  interior, Tarcog::EN673::Environment  exterior)
         {
             return std::unique_ptr<IGU>(new IGU(interior, exterior));
         }

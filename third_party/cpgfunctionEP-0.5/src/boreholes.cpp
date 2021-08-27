@@ -32,8 +32,8 @@ namespace gt::boreholes {
     };
 
     vector<Borehole> boreField(const vector<tuple<double, double>> &coordinates,
-                               const double &r_b, const double &H,
-                               const double &D){
+                               double r_b, double H,
+                               double D){
         vector<Borehole> bores(coordinates.size());
 
         double x;
@@ -91,7 +91,7 @@ namespace gt::boreholes {
             int nSimtmp;
             // reserve and insert
             auto _res_and_ins = [](vector<SimilaritiesType> &SimFrom,
-                    SimilaritiesType &SimTo, const int &i) {
+                    SimilaritiesType &SimTo, int i) {
                 // Sim positions
                 SimTo.Sim.reserve(SimTo.Sim.size() +
                     distance(SimFrom[i].Sim.begin(), SimFrom[i].Sim.end()));
@@ -191,10 +191,10 @@ namespace gt::boreholes {
             vector<gt::boreholes::Borehole> &boreSegments, const string& kind,
             double tol) {
         // Condition for equivalence of the real part of the FLS solution
-        auto compare_real_segments = [](const double &H1a, const double &H1b,
-                const double &H2a, const double &H2b, const double &D1a,
-                const double &D1b, const double &D2a, const double &D2b,
-                const double &tol){
+        auto compare_real_segments = [](double H1a, double H1b,
+                double H2a, double H2b, double D1a,
+                double D1b, double D2a, double D2b,
+                double tol){
             bool similarity;
             similarity = abs((H1a - H1b) / H1a) < tol &&
                     abs((H2a - H2b) / H2a) < tol &&
@@ -202,10 +202,10 @@ namespace gt::boreholes {
             return similarity;
         };
         // Condition for equivalence of the image part of the FLS solution
-        auto compare_image_segments = [](const double &H1a, const double &H1b,
-                const double &H2a, const double &H2b, const double &D1a,
-                const double &D1b, const double &D2a, const double &D2b,
-                const double &tol) {
+        auto compare_image_segments = [](double H1a, double H1b,
+                double H2a, double H2b, double D1a,
+                double D1b, double D2a, double D2b,
+                double tol) {
             bool similarity;
             similarity = abs((H1a - H1b) / H1a) < tol &&
                     abs((H2a - H2b) / H2a) < tol &&
@@ -213,10 +213,10 @@ namespace gt::boreholes {
             return similarity;
         };
         // Condition for equivalence of the full FLS solution
-        auto compare_realandimage_segments = [](const double &H1a,
-                const double &H1b, const double &H2a, const double &H2b,
-                const double &D1a, const double &D1b, const double &D2a,
-                const double &D2b, const double &tol) {
+        auto compare_realandimage_segments = [](double H1a,
+                double H1b, double H2a, double H2b,
+                double D1a, double D1b, double D2a,
+                double D2b, double tol) {
             bool similarity;
             similarity = abs((H1a - H1b) / H1a) < tol &&
                     abs((H2a - H2b) / H2a) < tol &&

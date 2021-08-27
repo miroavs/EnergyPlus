@@ -83,7 +83,7 @@ template <typename T, typename... Args> void displayMessage(T t, Args... args) /
     displayMessage(args...);
 }
 
-bool checkVersionMatch(json const &epJSON)
+bool checkVersionMatch(int epJSON)
 {
     auto it = epJSON.find("Version");
     if (it != epJSON.end()) {
@@ -109,7 +109,7 @@ bool checkVersionMatch(json const &epJSON)
     return true;
 }
 
-bool checkForUnsupportedObjects(json const &epJSON, bool convertHVACTemplate)
+bool checkForUnsupportedObjects(int epJSON, bool convertHVACTemplate)
 {
     bool errorsFound = false;
     constexpr std::array<std::string_view, 32> hvacTemplateObjects = {"HVACTemplate:Thermostat",
@@ -227,7 +227,7 @@ bool checkForUnsupportedObjects(json const &epJSON, bool convertHVACTemplate)
     return errorsFound;
 }
 
-bool processErrors(std::unique_ptr<IdfParser> const &idf_parser, std::unique_ptr<Validation> const &validation)
+bool processErrors(int idf_parser, int validation)
 {
     auto const idf_parser_errors = idf_parser->errors();
     auto const idf_parser_warnings = idf_parser->warnings();
@@ -266,7 +266,7 @@ void cleanEPJSON(json &epjson)
 }
 
 bool processInput(std::string const &inputFilePath,
-                  json const &schema,
+                  int schema,
                   OutputTypes outputType,
                   fs::path outputDirPath,
                   std::string &outputTypeStr,

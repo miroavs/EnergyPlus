@@ -560,12 +560,12 @@ namespace FuelCellElectricGenerator {
         void initialize(EnergyPlusData &state);
 
         void getDesignCapacities(
-            EnergyPlusData &state, const PlantLocation &calledFromLocation, Real64 &MaxLoad, Real64 &MinLoad, Real64 &OptLoad) override;
+            EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation, Real64 &MaxLoad, Real64 &MinLoad, Real64 &OptLoad) override;
 
         void setupOutputVars(EnergyPlusData &state);
 
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      const PlantLocation &calledFromLocation,
+                      EnergyPlus::PlantLocation calledFromLocation,
                       bool FirstHVACIteration,
                       Real64 &CurLoad,
                       bool RunFlag) override;
@@ -592,7 +592,7 @@ namespace FuelCellElectricGenerator {
                                         Real64 &PelDiff    // if constrained then this is the difference, positive
         );
 
-        Real64 FuelCellProductGasEnthResidual(EnergyPlusData &state, Real64 TprodGas, std::array<Real64, 2> const &Par);
+        Real64 FuelCellProductGasEnthResidual(EnergyPlusData &state, Real64 TprodGas, std::array<Real64, 2> Par);
 
         static void FigureGaseousWaterEnthalpy(Real64 FluidTemp, Real64 &HGasWater);
 

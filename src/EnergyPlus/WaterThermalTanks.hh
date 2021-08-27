@@ -388,13 +388,13 @@ namespace WaterThermalTanks {
 
         static PlantComponent *factory(EnergyPlusData &state, std::string const &objectName);
 
-        void
-        simulate(EnergyPlusData &state, const PlantLocation &calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
+        void simulate(
+            EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
 
-        void onInitLoopEquip([[maybe_unused]] EnergyPlusData &state, [[maybe_unused]] const PlantLocation &calledFromLocation) override;
+        void onInitLoopEquip([[maybe_unused]] EnergyPlusData &state, [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation) override;
 
         void getDesignCapacities(EnergyPlusData &state,
-                                 [[maybe_unused]] const PlantLocation &calledFromLocation,
+                                 [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation,
                                  Real64 &MaxLoad,
                                  Real64 &MinLoad,
                                  Real64 &OptLoad) override;
@@ -655,8 +655,8 @@ namespace WaterThermalTanks {
 
         void setupWaterHeaterOutputVars(EnergyPlusData &state);
 
-        void
-        simulate(EnergyPlusData &state, const PlantLocation &calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
+        void simulate(
+            EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
 
         Real64 PartLoadFactor(EnergyPlusData &state, Real64 PartLoadRatio_loc);
 
@@ -789,10 +789,10 @@ namespace WaterThermalTanks {
 
         static void ValidatePLFCurve(EnergyPlusData &state, int CurveIndex, bool &IsValid);
 
-        void onInitLoopEquip(EnergyPlusData &state, [[maybe_unused]] const PlantLocation &calledFromLocation) override;
+        void onInitLoopEquip(EnergyPlusData &state, [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation) override;
 
         void getDesignCapacities(EnergyPlusData &state,
-                                 [[maybe_unused]] const PlantLocation &calledFromLocation,
+                                 [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation,
                                  Real64 &MaxLoad,
                                  Real64 &MinLoad,
                                  Real64 &OptLoad) override;

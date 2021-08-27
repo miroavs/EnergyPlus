@@ -334,7 +334,7 @@ double lifetime_cycle_t::bilinear(double DOD, int cycle_number) {
 Lifetime Calendar Model
 */
 
-bool calendar_state::operator==(const calendar_state &p) const {
+bool calendar_state::operator==(calendar_state p) const {
     bool equal = (q_relative_calendar == p.q_relative_calendar);
 //    equal &= (day_age_of_battery == p.day_age_of_battery);
     equal &= (dq_relative_calendar_old == p.dq_relative_calendar_old);

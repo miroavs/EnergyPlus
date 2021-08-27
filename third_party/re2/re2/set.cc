@@ -33,7 +33,7 @@ RE2::Set::~Set() {
   delete prog_;
 }
 
-int RE2::Set::Add(const StringPiece& pattern, std::string* error) {
+int RE2::Set::Add(re2::StringPiece  pattern, std::string* error) {
   if (compiled_) {
     LOG(DFATAL) << "RE2::Set::Add() called after compiling";
     return -1;
@@ -102,11 +102,11 @@ bool RE2::Set::Compile() {
   return prog_ != NULL;
 }
 
-bool RE2::Set::Match(const StringPiece& text, std::vector<int>* v) const {
+bool RE2::Set::Match(re2::StringPiece  text, std::vector<int>* v) const {
   return Match(text, v, NULL);
 }
 
-bool RE2::Set::Match(const StringPiece& text, std::vector<int>* v,
+bool RE2::Set::Match(re2::StringPiece  text, std::vector<int>* v,
                      ErrorInfo* error_info) const {
   if (!compiled_) {
     LOG(DFATAL) << "RE2::Set::Match() called before compiling";

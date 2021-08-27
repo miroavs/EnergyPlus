@@ -11,7 +11,7 @@ namespace FenestrationCommon
         m_Matrix(tSize, std::vector<double>(tSize, 0))
     {}
 
-    SquareMatrix::SquareMatrix(const std::initializer_list<std::vector<double>> & tInput) :
+    SquareMatrix::SquareMatrix(std::initializer_list<std::vector<double>>  tInput) :
         m_size(tInput.size()),
         m_Matrix(m_size, std::vector<double>(m_size, 0))
     {

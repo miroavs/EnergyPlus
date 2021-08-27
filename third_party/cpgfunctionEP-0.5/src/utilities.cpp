@@ -11,7 +11,7 @@ using namespace std;
 
 namespace gt::utilities {
 
-    double time_scale(const double& H, const double& alpha){
+    double time_scale(double  H, double  alpha){
         return pow(H, 2) / (9 * alpha);
     }
 
@@ -115,7 +115,7 @@ namespace gt::utilities {
 
     }
 
-    vector<double> time_Eskilson(const double &H, const double &alpha){
+    vector<double> time_Eskilson(double H, double alpha){
         vector<double> logtime = Eskilson_original_points();
         vector<double> time = convert_time(logtime, H, alpha);
 
@@ -123,7 +123,7 @@ namespace gt::utilities {
     }  // time_Eskilson();
 
     vector<double> convert_time(vector<double> &logtime,
-                                     const double &H, const double &alpha) {
+                                     double H, double alpha) {
         int nt = logtime.size();
         vector<double> time(nt);
 

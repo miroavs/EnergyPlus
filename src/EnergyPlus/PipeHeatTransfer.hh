@@ -215,7 +215,7 @@ namespace PipeHeatTransfer {
         static PlantComponent *factory(EnergyPlusData &state, int objectType, std::string const &objectName);
 
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      const PlantLocation &calledFromLocation,
+                      EnergyPlus::PlantLocation calledFromLocation,
                       bool FirstHVACIteration,
                       Real64 &CurLoad,
                       bool RunFlag) override;

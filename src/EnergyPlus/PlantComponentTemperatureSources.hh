@@ -123,18 +123,18 @@ namespace PlantComponentTemperatureSources {
 
         void update(EnergyPlusData &state);
 
-        void
-        simulate(EnergyPlusData &state, const PlantLocation &calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
+        void simulate(
+            EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation, bool FirstHVACIteration, Real64 &CurLoad, bool RunFlag) override;
 
         void getDesignCapacities(EnergyPlusData &state,
-                                 [[maybe_unused]] const PlantLocation &calledFromLocation,
+                                 [[maybe_unused]] EnergyPlus::PlantLocation calledFromLocation,
                                  Real64 &MaxLoad,
                                  Real64 &MinLoad,
                                  Real64 &OptLoad) override;
 
         void getSizingFactor(Real64 &_SizFac) override;
 
-        void onInitLoopEquip(EnergyPlusData &state, const PlantLocation &calledFromLocation) override;
+        void onInitLoopEquip(EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation) override;
 
         static PlantComponent *factory(EnergyPlusData &state, std::string const &objectName);
 

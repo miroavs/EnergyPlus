@@ -34,7 +34,7 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::setFlowGeometry(double const t_Atop,
                                                      double const t_Abot,
-                                                     AirVerticalDirection const & t_Direction)
+                                                     Tarcog::ISO15099::AirVerticalDirection  t_Direction)
         {
             m_AirVerticalDirection = t_Direction;
             auto Ain = 0.0;
@@ -65,7 +65,7 @@ namespace Tarcog
 
         void CIGUVentilatedGapLayer::setFlowTemperatures(double const t_topTemp,
                                                          double const t_botTemp,
-                                                         AirVerticalDirection const & t_Direction)
+                                                         Tarcog::ISO15099::AirVerticalDirection  t_Direction)
         {
             m_AirVerticalDirection = t_Direction;
             switch(m_AirVerticalDirection)

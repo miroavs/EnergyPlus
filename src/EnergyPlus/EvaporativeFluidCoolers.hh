@@ -254,10 +254,10 @@ namespace EvaporativeFluidCoolers {
 
         void getSizingFactor(Real64 &_SizFac) override;
 
-        void getDesignCapacities(EnergyPlusData &state, const PlantLocation &, Real64 &MaxLoad, Real64 &MinLoad, Real64 &OptLoad) override;
+        void getDesignCapacities(EnergyPlusData &state, EnergyPlus::PlantLocation, Real64 &MaxLoad, Real64 &MinLoad, Real64 &OptLoad) override;
 
         void simulate([[maybe_unused]] EnergyPlusData &state,
-                      const PlantLocation &calledFromLocation,
+                      EnergyPlus::PlantLocation calledFromLocation,
                       bool FirstHVACIteration,
                       Real64 &CurLoad,
                       bool RunFlag) override;
@@ -280,7 +280,7 @@ namespace EvaporativeFluidCoolers {
 
         void SimSimpleEvapFluidCooler(EnergyPlusData &state, Real64 waterMassFlowRate, Real64 AirFlowRate, Real64 UAdesign, Real64 &outletWaterTemp);
 
-        void onInitLoopEquip(EnergyPlusData &state, const PlantLocation &calledFromLocation) override;
+        void onInitLoopEquip(EnergyPlusData &state, EnergyPlus::PlantLocation calledFromLocation) override;
 
         void oneTimeInit(EnergyPlusData &state) override;
     };

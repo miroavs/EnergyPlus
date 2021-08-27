@@ -29,7 +29,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*
 Define Voltage Model
 */
-bool voltage_state::operator==(const voltage_state &p) {
+bool voltage_state::operator==(voltage_state p) {
     return cell_voltage == p.cell_voltage;
 }
 

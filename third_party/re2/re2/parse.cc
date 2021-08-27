@@ -70,7 +70,7 @@ static const int kMaxRepeat = 1000;
 
 class Regexp::ParseState {
  public:
-  ParseState(ParseFlags flags, const StringPiece& whole_regexp,
+  ParseState(ParseFlags flags, re2::StringPiece  whole_regexp,
              RegexpStatus* status);
   ~ParseState();
 
@@ -107,18 +107,18 @@ class Regexp::ParseState {
   // Pushes a repeat operator regexp onto the stack.
   // A valid argument for the operator must already be on the stack.
   // s is the name of the operator, for use in error messages.
-  bool PushRepeatOp(RegexpOp op, const StringPiece& s, bool nongreedy);
+  bool PushRepeatOp(RegexpOp op, re2::StringPiece  s, bool nongreedy);
 
   // Pushes a repetition regexp onto the stack.
   // A valid argument for the operator must already be on the stack.
-  bool PushRepetition(int min, int max, const StringPiece& s, bool nongreedy);
+  bool PushRepetition(int min, int max, re2::StringPiece  s, bool nongreedy);
 
   // Checks whether a particular regexp op is a marker.
   bool IsMarker(RegexpOp op);
 
   // Processes a left parenthesis in the input.
   // Pushes a marker onto the stack.
-  bool DoLeftParen(const StringPiece& name);
+  bool DoLeftParen(re2::StringPiece  name);
   bool DoLeftParenNoCapture();
 
   // Processes a vertical bar in the input.
@@ -148,13 +148,13 @@ class Regexp::ParseState {
   // Parse a character class character into *rp.
   // Removes parsed text from s.
   bool ParseCCCharacter(StringPiece* s, Rune *rp,
-                        const StringPiece& whole_class,
+                        re2::StringPiece  whole_class,
                         RegexpStatus* status);
 
   // Parse a character class range into rr.
   // Removes parsed text from s.
   bool ParseCCRange(StringPiece* s, RuneRange* rr,
-                    const StringPiece& whole_class,
+                    re2::StringPiece  whole_class,
                     RegexpStatus* status);
 
   // Parse a Perl flag set or non-capturing group from s.
@@ -192,7 +192,7 @@ const RegexpOp kLeftParen = static_cast<RegexpOp>(kMaxRegexpOp+1);
 const RegexpOp kVerticalBar = static_cast<RegexpOp>(kMaxRegexpOp+2);
 
 Regexp::ParseState::ParseState(ParseFlags flags,
-                               const StringPiece& whole_regexp,
+                               re2::StringPiece  whole_regexp,
                                RegexpStatus* status)
   : flags_(flags), whole_regexp_(whole_regexp),
     status_(status), stacktop_(NULL), ncap_(0) {
@@ -472,7 +472,7 @@ bool Regexp::ParseState::PushSimpleOp(RegexpOp op) {
 // Pushes a repeat operator regexp onto the stack.
 // A valid argument for the operator must already be on the stack.
 // The char c is the name of the operator, for use in error messages.
-bool Regexp::ParseState::PushRepeatOp(RegexpOp op, const StringPiece& s,
+bool Regexp::ParseState::PushRepeatOp(RegexpOp op, re2::StringPiece  s,
                                       bool nongreedy) {
   if (stacktop_ == NULL || IsMarker(stacktop_->op())) {
     status_->set_code(kRegexpRepeatArgument);
@@ -565,7 +565,7 @@ int RepetitionWalker::ShortVisit(Regexp* re, int parent_arg) {
 // Pushes a repetition regexp onto the stack.
 // A valid argument for the operator must already be on the stack.
 bool Regexp::ParseState::PushRepetition(int min, int max,
-                                        const StringPiece& s,
+                                        re2::StringPiece  s,
                                         bool nongreedy) {
   if ((max != -1 && max < min) || min > kMaxRepeat || max > kMaxRepeat) {
     status_->set_code(kRegexpRepeatSize);
@@ -606,7 +606,7 @@ bool Regexp::ParseState::IsMarker(RegexpOp op) {
 
 // Processes a left parenthesis in the input.
 // Pushes a marker onto the stack.
-bool Regexp::ParseState::DoLeftParen(const StringPiece& name) {
+bool Regexp::ParseState::DoLeftParen(re2::StringPiece  name) {
   Regexp* re = new Regexp(kLeftParen, flags_);
   re->cap_ = ++ncap_;
   if (name.data() != NULL)
@@ -1413,7 +1413,7 @@ static int StringPieceToRune(Rune *r, StringPiece *sp, RegexpStatus* status) {
 
 // Return whether name is valid UTF-8.
 // If not, set status to kRegexpBadUTF8.
-static bool IsValidUTF8(const StringPiece& s, RegexpStatus* status) {
+static bool IsValidUTF8(re2::StringPiece  s, RegexpStatus* status) {
   StringPiece t = s;
   Rune r;
   while (t.size() > 0) {
@@ -1618,7 +1618,7 @@ void CharClassBuilder::AddRangeFlags(
 }
 
 // Look for a group with the given name.
-static const UGroup* LookupGroup(const StringPiece& name,
+static const UGroup* LookupGroup(re2::StringPiece  name,
                                  const UGroup *groups, int ngroups) {
   // Simple name lookup.
   for (int i = 0; i < ngroups; i++)
@@ -1628,11 +1628,11 @@ static const UGroup* LookupGroup(const StringPiece& name,
 }
 
 // Look for a POSIX group with the given name (e.g., "[:^alpha:]")
-static const UGroup* LookupPosixGroup(const StringPiece& name) {
+static const UGroup* LookupPosixGroup(re2::StringPiece  name) {
   return LookupGroup(name, posix_groups, num_posix_groups);
 }
 
-static const UGroup* LookupPerlGroup(const StringPiece& name) {
+static const UGroup* LookupPerlGroup(re2::StringPiece  name) {
   return LookupGroup(name, perl_groups, num_perl_groups);
 }
 
@@ -1643,7 +1643,7 @@ static URange32 any32[] = { { 65536, Runemax } };
 static UGroup anygroup = { "Any", +1, any16, 1, any32, 1 };
 
 // Look for a Unicode group with the given name (e.g., "Han")
-static const UGroup* LookupUnicodeGroup(const StringPiece& name) {
+static const UGroup* LookupUnicodeGroup(re2::StringPiece  name) {
   // Special case: "Any" means any.
   if (name == StringPiece("Any"))
     return &anygroup;
@@ -1856,7 +1856,7 @@ static ParseStatus ParseCCName(StringPiece* s, Regexp::ParseFlags parse_flags,
 // Sets *s to span the remainder of the string.
 // Sets *rp to the character.
 bool Regexp::ParseState::ParseCCCharacter(StringPiece* s, Rune *rp,
-                                          const StringPiece& whole_class,
+                                          re2::StringPiece  whole_class,
                                           RegexpStatus* status) {
   if (s->size() == 0) {
     status->set_code(kRegexpMissingBracket);
@@ -1879,7 +1879,7 @@ bool Regexp::ParseState::ParseCCCharacter(StringPiece* s, Rune *rp,
 // Sets *s to span the remainder of the string.
 // Sets *rp to the character.
 bool Regexp::ParseState::ParseCCRange(StringPiece* s, RuneRange* rr,
-                                      const StringPiece& whole_class,
+                                      re2::StringPiece  whole_class,
                                       RegexpStatus* status) {
   StringPiece os = *s;
   if (!ParseCCCharacter(s, &rr->lo, whole_class, status))
@@ -2015,7 +2015,7 @@ bool Regexp::ParseState::ParseCharClass(StringPiece* s,
 // PCRE limits names to 32 bytes.
 // Python rejects names starting with digits.
 // We don't enforce either of those.
-static bool IsValidCaptureName(const StringPiece& name) {
+static bool IsValidCaptureName(re2::StringPiece  name) {
   if (name.size() == 0)
     return false;
   for (size_t i = 0; i < name.size(); i++) {
@@ -2182,7 +2182,7 @@ BadPerlOp:
 // into UTF8 encoding in string.
 // Can't use EncodingUtils::EncodeLatin1AsUTF8 because it is
 // deprecated and because it rejects code points 0x80-0x9F.
-void ConvertLatin1ToUTF8(const StringPiece& latin1, std::string* utf) {
+void ConvertLatin1ToUTF8(re2::StringPiece  latin1, std::string* utf) {
   char buf[UTFmax];
 
   utf->clear();
@@ -2197,7 +2197,7 @@ void ConvertLatin1ToUTF8(const StringPiece& latin1, std::string* utf) {
 // returning the corresponding Regexp tree.
 // The caller must Decref the return value when done with it.
 // Returns NULL on error.
-Regexp* Regexp::Parse(const StringPiece& s, ParseFlags global_flags,
+Regexp* Regexp::Parse(re2::StringPiece  s, ParseFlags global_flags,
                       RegexpStatus* status) {
   // Make status non-NULL (easier on everyone else).
   RegexpStatus xstatus;

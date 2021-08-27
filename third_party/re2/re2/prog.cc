@@ -284,7 +284,7 @@ static bool IsMatch(Prog* prog, Prog::Inst* ip) {
   }
 }
 
-uint32_t Prog::EmptyFlags(const StringPiece& text, const char* p) {
+uint32_t Prog::EmptyFlags(re2::StringPiece  text, const char* p) {
   int flags = 0;
 
   // ^ and \A

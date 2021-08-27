@@ -55,7 +55,7 @@ namespace Tarcog
             resetCalculated();
         }
 
-        void CEnvironment::setForcedVentilation(ForcedVentilation const & t_ForcedVentilation)
+        void CEnvironment::setForcedVentilation(Tarcog::ISO15099::ForcedVentilation  t_ForcedVentilation)
         {
             m_ForcedVentilation = t_ForcedVentilation;
             resetCalculated();

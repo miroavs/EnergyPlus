@@ -73,7 +73,7 @@ void GLModel::drawExcept(std::vector<SurfaceBuffer> hiddenSurfaces) {
   // Sort vector
   std::sort(
       hiddenSurfaces.begin(), hiddenSurfaces.end(),
-      [](const SurfaceBuffer &a, const SurfaceBuffer &b) -> bool { return a.begin > b.begin; });
+      [](Pumbra::SurfaceBuffer a, Pumbra::SurfaceBuffer b) -> bool { return a.begin > b.begin; });
 
   // Begin (if first hidden surface isn't first surface)
   if (hiddenSurfaces[0].begin != 0u) {
